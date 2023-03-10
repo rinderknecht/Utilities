@@ -1,0 +1,7 @@
+(library
+  (name Utilities)
+  (public_name Utilities)
+  (libraries
+    ;; Third party
+    SourceLoc
+    str))
