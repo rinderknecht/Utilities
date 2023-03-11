@@ -1,5 +1,7 @@
 (* Displaying code snippets in error messages *)
 
+module Region = SourceLoc.Region
+
 (* Strings containing OCaml code need to be escaped before printed out
    to the terminal, but OCaml escaping function for strings escapes
    the double quotes, so we need to unescape those. *)
@@ -16,11 +18,11 @@ let print_code ~(no_colour: bool) ppf (region: Region.t)
   (* Colours are disabled if the corresponding environment variable or
      CLI flag is set. *)
   let no_color_cli_flag = no_colour in
-  let no_color_env = match Sys.getenv "NO_COLOR" with
-                       Some value -> String.(value <> "")
+  let no_color_env = match Sys.getenv_opt "NO_COLOR" with
+                       Some value -> value <> ""
                      | None -> false in
-  let is_dumb    = match Sys.getenv "TERM" with
-                     Some value -> String.(value = "dumb")
+  let is_dumb    = match Sys.getenv_opt "TERM" with
+                     Some value -> String.equal value "dumb"
                    | None -> false in
   let dont_print_colors = is_dumb || no_color_env || no_color_cli_flag
   and start      = region#start#line
@@ -42,30 +44,24 @@ let print_code ~(no_colour: bool) ppf (region: Region.t)
               else fprintf ppf " | \027[1m\027[31m%s\027[0m\n%!" line
             else
               if current = start then
-                let before = String.sub line ~pos:0 ~len:start_offs |> escape in
+                let before = String.sub line 0 start_offs |> escape in
                 fprintf ppf " | %s" before;
                 if current = stop then
                   let between =
                     if start_offs >= width then "\n" (* input_line removes \n *)
                     else
                       if start_offs = stop_offs then
-                        String.sub line ~pos:start_offs ~len:1
+                        String.sub line start_offs 1
                       else
-                        String.sub line
-                                   ~pos:start_offs
-                                   ~len:(stop_offs - start_offs) in
+                        String.sub line start_offs (stop_offs - start_offs) in
                   let between = escape between
                   and after =
                     if start_offs >= width then ""
                     else
                       if start_offs = stop_offs then
-                        String.sub line
-                                   ~pos:(stop_offs + 1)
-                                   ~len:(width - stop_offs -1)
+                        String.sub line (stop_offs + 1) (width - stop_offs -1)
                       else
-                        String.sub line
-                                   ~pos:stop_offs
-                                   ~len:(width - stop_offs) in
+                        String.sub line stop_offs (width - stop_offs) in
                   let after = escape after in
                   if dont_print_colors
                   then fprintf ppf "%s%!%s\n" between after
@@ -95,11 +91,11 @@ let print_code ~(no_colour: bool) ppf (region: Region.t)
        | Stdlib.End_of_file -> () (* Normal exit *)
     in loop_over_lines 0 start stop
 
-let print ~no_colour ppf region : unit =
+let print ~no_colour ppf (region: Region.t) : unit =
   if region#file <> "" then
     fprintf ppf "%s:\n" (region#to_string `Point);
   try
-    let in_chan = In_channel.create region#file in
+    let in_chan = In_channel.open_text region#file in
     let result  = print_code ~no_colour ppf region in_chan in
     In_channel.close in_chan;
     result

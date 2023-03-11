@@ -1,5 +1,7 @@
 (* Side-effects on lexing buffers (see [Stdlib.Lexing]) *)
 
+module Region = SourceLoc.Region
+
 type file_path = string
 
 (* Extracting information *)

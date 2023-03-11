@@ -52,7 +52,7 @@ let sepseq_rev = function
 
 (* Leftwards iterators *)
 
-let nseq_foldr f (hd,tl) init = List.fold_right f (hd::tl) ~init
+let nseq_foldr f (hd,tl) = List.fold_right f (hd::tl)
 
 let nsepseq_foldr f (hd,tl) a =
   f hd (List.fold_right (fun (_,x) -> f x) tl a)
