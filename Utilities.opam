@@ -3,17 +3,17 @@ name         : "Utilities"
 version      : "1.0"
 synopsis     : "Utilities for OCaml"
 authors      : ["Christian Rinderknecht"]
+maintainer   : "rinderknecht@free.fr"
 homepage     : "https://github.com/rinderknecht/Utilities"
 bug-reports  : "https://github.com/rinderknecht/Utilities/issues"
+dev-repo     : "git+https://github.com/rinderknecht/Utilities.git"
 license      : "MIT"
 # If you change the dependencies, run `opam lock` in the root
 depends      : ["dune"
-                "SourceLoc" {= "1.0"}]
+                "SourceLoc" {>= "1.0"}]
 build        : [["dune" "build" "-p" name]]
-pin-depends: [
-  ["SourceLoc.1.0"
-   "git+https://github.com/rinderknecht/SourceLoc.git#1.0"]
-]
+pin-depends  : [["SourceLoc.1.0"
+                 "git+https://github.com/rinderknecht/SourceLoc.git#1.0"]]
 
 url {
   src: "https://github.com/rinderknecht/Utilities/-/archive/master/Utilities.tar.gz"
