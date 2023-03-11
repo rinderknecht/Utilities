@@ -100,3 +100,5 @@ let print ~no_colour ppf (region: Region.t) : unit =
     In_channel.close in_chan;
     result
   with Sys_error _msg -> () (* TODO: Report to maintainers? *)
+
+let pp_lift ~no_colour ppf r = print ~no_colour ppf r
