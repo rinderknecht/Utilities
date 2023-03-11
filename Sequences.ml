@@ -24,7 +24,7 @@ let sepseq_foldl f a = function
 
 let nseq_iter f (hd,tl) = List.iter f (hd::tl)
 
-let nsepseq_iter f (hd,tl) = f hd; List.iter (f <@ snd) tl
+let nsepseq_iter f (hd,tl) = f hd; List.iter (fun (_,x) -> f x) tl
 
 let sepseq_iter f = function
     None -> ()

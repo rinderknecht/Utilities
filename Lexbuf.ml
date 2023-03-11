@@ -67,22 +67,22 @@ type close = unit -> unit
 
 let rec from_input = function
   Lexbuf (file, lexbuf) ->
-    let () = if String.(file <> "") then reset ~file lexbuf
+    let () = if file <> "" then reset ~file lexbuf
     in Stdlib.Ok (lexbuf, fun () -> ())
 | String (file, string) ->
     from_input (Lexbuf (file, Lexing.from_string string))
 | Buffer (file, buffer) ->
     from_input (String (file, Buffer.contents buffer))
 | Channel (file, in_chan) ->
-    let close () = Core.close_in in_chan in
+    let close () = close_in in_chan in
     let lexbuf   = Lexing.from_channel in_chan in
-    let () = if String.(file <> "") then reset ~file lexbuf
+    let () = if file <> "" then reset ~file lexbuf
     in Ok (lexbuf, close)
 | File "" ->
-    from_input (Channel ("", Core.stdin))
+    from_input (Channel ("", stdin))
 | File file ->
     try
-      from_input (Channel (file, Core.open_in file))
+      from_input (Channel (file, open_in file))
     with Sys_error msg ->
       let region = Region.min ~file
       in Error Region.{region; value=msg}

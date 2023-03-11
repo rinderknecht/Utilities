@@ -1,16 +1,19 @@
 opam-version : "2.0"
-name         : "utilities"
+name         : "Utilities"
 version      : "1.0"
 synopsis     : "Utilities for OCaml"
 authors      : ["Christian Rinderknecht"]
 homepage     : "https://github.com/rinderknecht/Utilities"
 bug-reports  : "https://github.com/rinderknecht/Utilities/issues"
 license      : "MIT"
-homepage     : "https://gitlab.com/ligolang/ligo-utils"
-bug-reports  : "https://gitlab.com/ligolang/ligo-utils/issues"
 # If you change the dependencies, run `opam lock` in the root
-depends      : ["dune" "SourceLoc"]
+depends      : ["dune"
+                "SourceLoc" {= "1.0"}]
 build        : [["dune" "build" "-p" name]]
+pin-depends: [
+  ["SourceLoc.1.0"
+   "git+https://github.com/rinderknecht/SourceLoc.git#1.0"]
+]
 
 url {
   src: "https://github.com/rinderknecht/Utilities/-/archive/master/Utilities.tar.gz"
