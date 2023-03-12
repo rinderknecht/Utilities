@@ -12,8 +12,8 @@ license      : "MIT"
 depends      : ["dune"
                 "SourceLoc" {>= "1.0"}]
 build        : [["dune" "build" "-p" name]]
-pin-depends  : [["SourceLoc.1.0"
-                 "git+https://github.com/rinderknecht/SourceLoc.git#1.0"]]
+pin-depends  : [["SourceLoc"
+                 "git+https://github.com/rinderknecht/SourceLoc.git"]]
 
 url {
   src: "https://github.com/rinderknecht/Utilities/-/archive/master/Utilities.tar.gz"
