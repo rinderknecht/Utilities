@@ -11,7 +11,7 @@ license      : "MIT"
 # If you change the dependencies, run `opam lock` in the root
 depends      : ["dune" "SourceLoc"]
 build        : [["dune" "build" "-p" name]]
-pin-depends  : [["SourceLoc"
+pin-depends  : [["SourceLoc.1.0"
                  "git+https://github.com/rinderknecht/SourceLoc.git"]]
 
 url {
