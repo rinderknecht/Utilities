@@ -29,6 +29,11 @@ let print_code ~(no_colour: bool) ppf (region: Region.t)
   and start_offs = region#start#offset `Point
   and stop       = region#stop#line
   and stop_offs  = region#stop#offset `Point in
+  let print_underline ppf blanks_len line_len =
+    let blanks = String.make blanks_len ' ' in
+    let line = String.make line_len '^' in
+    fprintf ppf "      %s%s\n%!" blanks line
+  in
   let rec loop_over_lines current start stop =
     try
       let current = current + 1
@@ -40,7 +45,9 @@ let print_code ~(no_colour: bool) ppf (region: Region.t)
           if start <= current && current <= stop then
             if start < current && current < stop then
               let line = escape line in
-              if dont_print_colors then fprintf ppf " | %s\n%!" line
+              if dont_print_colors then (
+                fprintf ppf " | %s\n%!" line;
+                print_underline ppf 0 (String.length line))
               else fprintf ppf " | \027[1m\027[31m%s\027[0m\n%!" line
             else
               if current = start then
@@ -63,15 +70,17 @@ let print_code ~(no_colour: bool) ppf (region: Region.t)
                       else
                         String.sub line stop_offs (width - stop_offs) in
                   let after = escape after in
-                  if dont_print_colors
-                  then fprintf ppf "%s%!%s\n" between after
-                  else fprintf ppf "\027[1m\027[31m%s\027[0m%!%s\n"
-                               between after
+                  if dont_print_colors  then (
+                    fprintf ppf "%s%!%s\n" between after;
+                    print_underline ppf (String.length before) (String.length between))
+                  else fprintf ppf "\027[1m\027[31m%s\027[0m%!%s\n" between after
                 else
                   let after =
                     String.sub line start_offs (width - start_offs) in
                   let after = escape after in
-                  if dont_print_colors then fprintf ppf "%s%!\n" after
+                  if dont_print_colors then (
+                    fprintf ppf "%s%!\n" after;
+                    print_underline ppf (String.length before) (String.length after))
                   else fprintf ppf "\027[1m\027[31m%s\027[0m%!\n" after
               else
                 if current = stop then
@@ -79,10 +88,10 @@ let print_code ~(no_colour: bool) ppf (region: Region.t)
                   let after  = String.sub line stop_offs (width - stop_offs) in
                   let after  = escape after in
                   fprintf ppf " | ";
-                  if dont_print_colors
-                  then fprintf ppf "%s%!%s\n" before after
-                  else fprintf ppf "\027[1m\027[31m%s\027[0m%!%s\n"
-                               before after
+                  if dont_print_colors then (
+                    fprintf ppf "%s%!%s\n" before after;
+                    print_underline ppf 0 (String.length before))
+                  else fprintf ppf "\027[1m\027[31m%s\027[0m%!%s\n" before after
                 else ()
           else fprintf ppf " | %s\n" (escape line)
       in if current < stop + 2 then
